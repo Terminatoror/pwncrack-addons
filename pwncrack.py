@@ -9,7 +9,7 @@ import pwnagotchi
 
 class UploadConvertPlugin(Plugin):
     __author__ = 'Terminatoror'
-    __version__ = '1.0.1'
+    __version__ = '1.0.2'
     __license__ = 'GPL3'
     __description__ = 'Converts .pcap files to .hc22000 and uploads them to pwncrack.org when internet is available.'
 
@@ -51,11 +51,14 @@ class UploadConvertPlugin(Plugin):
         except Exception as e:
             logging.error(f"[pwncrack] Error occurred during upload process: {e}", exc_info=True)
 
+    def _is_pcap(self, filename):
+        return filename.endswith('.pcap') or filename.endswith('.pcapng')
+        
     def _convert_and_upload(self):
         # Convert all .pcap files to .hc22000, excluding files matching whitelist items
         last_up_time = os.path.getmtime(self.last_upload_path) if os.path.isfile(self.last_upload_path) else 0
         pcap_files = [f for f in os.listdir(self.handshake_dir)
-                      if f.endswith('.pcap') and os.path.getmtime(os.path.join(self.handshake_dir,f)) > last_up_time and not any(item in f for item in self.whitelist)]
+                      if self._is_pcap(f) and os.path.getmtime(os.path.join(self.handshake_dir,f)) > last_up_time and not any(item in f for item in self.whitelist)]
         if pcap_files:
             tmp_file = os.path.join(self.handshake_dir, '.pwncrack_uploading')
             with open(tmp_file, 'w') as fout:
