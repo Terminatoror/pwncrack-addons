@@ -8,7 +8,7 @@ key = 'your_key_here'
 combined_file = 'combined.hc22000'
 
 # Convert all .pcap files to .hc22000
-pcap_files = [f for f in os.listdir('.') if f.endswith('.pcap')]
+pcap_files = [f for f in os.listdir('.') if f.endswith('.pcap') or f.endswith('.pcapng')]
 for pcap_file in pcap_files:
     subprocess.run(['hcxpcapngtool', '-o', combined_file, pcap_file])
 
